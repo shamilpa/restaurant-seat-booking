@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:restaurant_seat_booking/view%20model/color_component.dart';
 import 'package:restaurant_seat_booking/view%20model/sizedbox.dart';
 import 'package:restaurant_seat_booking/view%20model/text_style.dart';
 
@@ -55,7 +56,7 @@ class BookingContainer extends StatelessWidget {
                           Icon(
                               size: 15,
                               Icons.location_on_outlined,
-                              color: Color.fromARGB(255, 255, 234, 220)),
+                              color: iconclr),
                           Text(
                             location,
                             style: textstyle,

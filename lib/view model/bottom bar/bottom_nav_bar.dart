@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:restaurant_seat_booking/view%20model/bottom%20bar/cubit/bottom_bar_cubit.dart';
 import 'package:restaurant_seat_booking/view%20model/sizedbox.dart';
-import 'package:restaurant_seat_booking/view/booking%20page/booking_page.dart';
+import 'package:restaurant_seat_booking/view/booking%20history%20page/booking_history_page.dart';
 import 'package:restaurant_seat_booking/view/home%20page/home_page.dart';
 import 'package:restaurant_seat_booking/view/profile%20page/profile_page.dart';
 import 'package:restaurant_seat_booking/view/restaurant%20page/restaurant_page.dart';

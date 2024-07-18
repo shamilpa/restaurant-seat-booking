@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:restaurant_seat_booking/view%20model/sizedbox.dart';
 import 'package:restaurant_seat_booking/view%20model/text_style.dart';
-import 'package:restaurant_seat_booking/view/booking%20page/seat_selection.dart';
+import 'package:restaurant_seat_booking/view/Seat%20Selection/seat_selection.dart';
 
 class RestaurantNames extends StatelessWidget {
   RestaurantNames(
