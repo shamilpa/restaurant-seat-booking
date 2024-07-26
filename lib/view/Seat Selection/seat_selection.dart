@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:restaurant_seat_booking/view%20model/color_component.dart';
 import 'package:restaurant_seat_booking/view%20model/sizedbox.dart';
 import 'package:restaurant_seat_booking/view%20model/text_style.dart';
 import 'package:restaurant_seat_booking/view/booking%20history%20page/booking_history_page.dart';
+import 'package:restaurant_seat_booking/view/booking%20history%20page/cubit/booking_history_cubit.dart';
 
 import 'cubit/seat_selection_cubit.dart';
 import 'cubit/seat_selection_state.dart';
@@ -12,8 +14,11 @@ import 'cubit/seat_selection_state.dart';
 class BookingSeat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => BookingSeatCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => BookingSeatCubit()),
+        BlocProvider(create: (context) => BookingHistoryCubit()..loadBookings()),
+      ],
       child: _BookingSeatView(),
     );
   }
@@ -76,12 +81,45 @@ class _BookingSeatView extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // ignore: unnecessary_null_comparison
-                        Text(state.selectedTime==null?'Select your time':state.selectedTime.format(context), style: textstyle.copyWith(fontWeight: FontWeight.bold)),
+                        Text(state.selectedTime.format(context), style: textstyle.copyWith(fontWeight: FontWeight.bold)),
                         Icon(Icons.access_time, color: iconclr),
                       ],
                     ),
                   ),
+                ),
+                16.hBox,
+                Text(
+                  'Number of Seats:',
+                  style: textstyle.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                8.hBox,
+                Container(
+                  height: 100,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: bgcolor),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: CupertinoPicker(
+                    magnification: 1.2,
+                    selectionOverlay: CupertinoPickerDefaultSelectionOverlay(background: Color.fromRGBO(116, 81, 45, 0.411),),
+                    itemExtent: 32,
+                    onSelectedItemChanged: (int index) {
+                      context.read<BookingSeatCubit>().selectNumberOfSeats(index + 1);
+                    },
+                    children: List<Widget>.generate(10, (index) {
+                      return Center(
+                        child: Text(
+                          '${index + 1}',
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: context.read<BookingSeatCubit>().state.numberOfSeats == index + 1 ? Colors.white : bgcolor),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+                16.hBox,
+                Text(
+                  'Selected Seats: ${state.numberOfSeats}',
+                  style: textstyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 16.hBox,
                 Text(
@@ -156,6 +194,9 @@ class _BookingSeatView extends StatelessWidget {
       initialDate: context.read<BookingSeatCubit>().state.selectedDate,
       firstDate: DateTime.now(),
       lastDate: DateTime(2101),
+      builder: (context, child) {
+        return Theme(data: ThemeData.light().copyWith(colorScheme: ColorScheme.light(primary: bgcolor,)), child: child!);
+      },
     );
     if (picked != null) {
       context.read<BookingSeatCubit>().selectDate(picked);
@@ -174,22 +215,50 @@ class _BookingSeatView extends StatelessWidget {
 
   void _bookTable(BuildContext context, BookingSeatState state) {
     if (state.selectedTable != -1) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          backgroundColor: bgcolor,
-          title: Text('Booking Confirmed', style: textstyle),
-          content: Text(
-            'Table ${state.selectedTable + 1} booked for ${DateFormat.yMd().format(state.selectedDate)} at ${state.selectedTime.format(context)}',
-            style: textstyle,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => BookingPage())),
-              child: Text('OK', style: textstyle),
+      try {
+        // Use the confirmBooking method from BookingSeatCubit
+        Map<String, String> newBooking = context.read<BookingSeatCubit>().confirmBooking(context);
+
+        // Add the new booking to the BookingHistoryCubit
+        context.read<BookingHistoryCubit>().addBooking(newBooking);
+
+        showDialog(
+          context: context,
+          builder: (dialogContext) => AlertDialog(
+            backgroundColor: bgcolor,
+            title: Text('Booking Confirmed', style: textstyle),
+            content: Text(
+              'Table ${state.selectedTable + 1} booked for ${DateFormat.yMd().format(state.selectedDate)} at ${state.selectedTime.format(context)} with ${state.numberOfSeats} seats',
+              style: textstyle,
             ),
-          ],
-        ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => BlocProvider.value(
+                        value: context.read<BookingHistoryCubit>(),
+                        child: BookingPage(),
+                      ),
+                    ),
+                  );
+                },
+                child: Text('OK', style: textstyle),
+              ),
+            ],
+          ),
+        );
+      } catch (e) {
+        // Handle the exception (e.g., show an error message)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    } else {
+      // Show a message if no table is selected
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select a table before booking')),
       );
     }
   }

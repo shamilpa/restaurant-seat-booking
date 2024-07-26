@@ -153,7 +153,7 @@ class RegisterPage extends StatelessWidget {
                     child: ElevatedButton(
                         style: ButtonStyle(
                             animationDuration: Duration(seconds: 2),
-                            backgroundColor: WidgetStatePropertyAll(
+                            backgroundColor: MaterialStatePropertyAll(
                                 Color.fromRGBO(175, 143, 111, 1.0))),
                         onPressed: () {
                           cubit.register();

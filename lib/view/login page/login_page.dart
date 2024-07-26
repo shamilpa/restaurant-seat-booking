@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:restaurant_seat_booking/view%20model/color_component.dart';
 import 'package:restaurant_seat_booking/view%20model/sizedbox.dart';
 import 'package:restaurant_seat_booking/view/login%20page/cubit/login_page_cubit.dart';
-import 'package:restaurant_seat_booking/view/register%20page/register_page.dart';
+import '../register page/register_page.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //backgroundColor: const Color.fromRGBO(175, 143, 111, 1.0),
       backgroundColor: bgcolor,
-
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: bgcolor,
@@ -57,7 +55,6 @@ class LoginPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  
                   5.hBox,
                   Container(
                     width: 350,
@@ -93,7 +90,6 @@ class LoginPage extends StatelessWidget {
                     width: 350,
                     child: TextFormField(
                       style: TextStyle(color: Colors.white),
-
                       obscureText: !cubit.isPasswordVisible,
                       controller: cubit.password,
                       decoration: InputDecoration(
@@ -110,7 +106,7 @@ class LoginPage extends StatelessWidget {
                                 )),
                           ),
                           filled: true,
-                          fillColor: const  Color.fromRGBO(175, 143, 111, 1.0),
+                          fillColor: const Color.fromRGBO(175, 143, 111, 1.0),
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(50),
                               borderSide: const BorderSide())),
@@ -137,11 +133,12 @@ class LoginPage extends StatelessWidget {
                     height: 60,
                     width: 120,
                     child: ElevatedButton(
-                        style: const ButtonStyle(
+                        style:  ButtonStyle(
                             animationDuration: Duration(seconds: 2),
                             backgroundColor: WidgetStatePropertyAll(
-                                 Color.fromRGBO(175, 143, 111, 1.0))),
-                        onPressed: () {},
+                                Color.fromRGBO(175, 143, 111, 1.0))),
+                        onPressed: () => cubit.login(context),
+                        
                         child: const Text(
                           "Login",
                           style: TextStyle(
@@ -172,7 +169,7 @@ class LoginPage extends StatelessWidget {
                           child: const Text(
                             "Register",
                             style: TextStyle(
-                                color:  Colors.white70,
+                                color: Colors.white70,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700),
                           )),

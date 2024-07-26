@@ -1,19 +1,19 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:restaurant_seat_booking/view%20model/booking_custom.dart';
-import 'package:restaurant_seat_booking/view%20model/color_component.dart';
-import 'package:restaurant_seat_booking/view%20model/sizedbox.dart';
-import 'package:restaurant_seat_booking/view%20model/text_style.dart';
-import 'package:restaurant_seat_booking/view/booking%20history%20page/cubit/booking_history_cubit.dart';
+import '../../view model/booking_custom.dart';
+import '../../view model/color_component.dart';
+import '../../view model/text_style.dart';
+import 'cubit/booking_history_cubit.dart';
 
 class BookingPage extends StatelessWidget {
-  BookingPage({super.key});
+  BookingPage({Key? key}) : super(key: key);
 
   void _showCancelDialog(BuildContext context, int index) {
+    final bookingHistoryCubit = context.read<BookingHistoryCubit>();
+
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           backgroundColor: bgcolor,
           title: Text(
@@ -27,13 +27,17 @@ class BookingPage extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
               },
               child: Text('No', style: textstyle),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                bookingHistoryCubit.cancelBooking(index);
+                Navigator.of(dialogContext).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Booking cancelled successfully')),
+                );
               },
               child: Text('Yes', style: textstyle),
             ),
@@ -45,52 +49,48 @@ class BookingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(
-          "Booking History",
-          style: textstyle.copyWith(fontSize: 28, fontWeight: FontWeight.w600),
-        ),
-        backgroundColor: bgcolor,
-      ),
-      body: BlocProvider(
-        create: (context) => BookingHistoryCubit(),
-        child: BlocBuilder<BookingHistoryCubit, BookingHistoryState>(
-          builder: (context, state) {
-            if (state is BookingHistoryInitial) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (state is BookingsLoaded) {
-              return Column(
-                children: [
-                  Expanded(
-                    child: ListView.separated(
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () => _showCancelDialog(context, index),
-                          child: BookingContainer(
-                            Img: "assets/hoy_punjab.png",
-                            txt: "Hoy Punjab",
-                            location: "Hilite Mall, Kozhikode",
-                          ),
-                        );
-                      },
-                      separatorBuilder: (context, index) => 1.hBox,
-                      itemCount: 1,
+    return BlocProvider(
+      create: (context) => BookingHistoryCubit()..loadBookings(),
+      child: BlocBuilder<BookingHistoryCubit, BookingHistoryState>(
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              title: Text(
+                "Booking History",
+                style: textstyle.copyWith(
+                    fontSize: 28, fontWeight: FontWeight.w600),
+              ),
+              backgroundColor: bgcolor,
+            ),
+             body: state is BookingsLoaded
+              ? Column(
+                  children: [
+                    Expanded(
+                      child: state.bookings.isEmpty
+                          ? Center(child: Text("No bookings available", style: textstyle))
+                          : ListView.separated(
+                              itemBuilder: (context, index) {
+                                final booking = state.bookings[index];
+                                return GestureDetector(
+                                  onTap: () => _showCancelDialog(context, index),
+                                  child: BookingContainer(
+                                    Img: booking['Img'] ?? '',
+                                    txt: booking['txt'] ?? '',
+                                    location: booking['location'] ?? '',
+                                  ),
+                                );
+                              },
+                              separatorBuilder: (context, index) => SizedBox(height: 8),
+                              itemCount: state.bookings.length,
+                            ),
                     ),
-                  ),
-                ],
-              );
-            } else {
-              return Center(child: Text("something went wrong"));
-            }
-          },
-        ),
-      ),
-      backgroundColor: scaffclr,
-      // bottomNavigationBar: TestNavBar(),
-    );
+                  ],
+                )
+              : Center(child: CircularProgressIndicator()),
+          backgroundColor: scaffclr,
+        );
+      },
+    ));
   }
 }

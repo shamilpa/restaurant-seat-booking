@@ -11,29 +11,36 @@ class RestaurantPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: scaffclr,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(
           "Restaurants",
-          style: textstyle.copyWith(fontSize: 28,fontWeight: FontWeight.w600),
+          style: textstyle.copyWith(
+            fontSize: screenHeight * 0.035,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         backgroundColor: bgcolor,
       ),
       body: Column(
         children: [
           Expanded(
-              child: ListView.separated(
-                  itemBuilder: (context, index) {
-                    return RestaurantNames(
-                      Img: "assets/hoy_punjab.png",
-                      txt: "Hoy Punjab",
-                      location: "Hilite Mall,Kozhikode",
-                    );
-                  },
-                  separatorBuilder: (context, index) => 1.hBox,
-                  itemCount: 8))
+            child: ListView.separated(
+              itemBuilder: (context, index) {
+                return RestaurantNames(
+                  Img: "assets/hoy_punjab.png",
+                  txt: "Hoy Punjab",
+                  location: "Hilite Mall, Kozhikode",
+                );
+              },
+              separatorBuilder: (context, index) => SizedBox(height: screenHeight * 0.001), // Responsive separator
+              itemCount: 8,
+            ),
+          ),
         ],
       ),
       // bottomNavigationBar: BottomNavBar(),

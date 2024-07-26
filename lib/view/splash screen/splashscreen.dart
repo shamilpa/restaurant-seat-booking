@@ -3,9 +3,8 @@ import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:restaurant_seat_booking/local_storage.dart';
-import 'package:restaurant_seat_booking/view/home%20page/home_page.dart';
 import 'package:restaurant_seat_booking/view/login%20page/login_page.dart';
-
+import 'package:restaurant_seat_booking/view%20model/bottom%20bar/bottom_nav_bar.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,6 +15,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   String? token;
+
   @override
   void initState() {
     super.initState();
@@ -24,10 +24,21 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> fetchToken() async {
     token = await LocalStorage.getData();
-    print("Token: $token");
+    bool isTokenValid = await validateToken(token);
+    print("Token: $token, Is Valid: $isTokenValid");
     if (mounted) {
-      setState(() {});
+      setState(() {
+        token = isTokenValid ? token : null;
+      });
     }
+  }
+
+  Future<bool> validateToken(String? token) async {
+    if (token == null) return false;
+    // TODO: Implement your token validation logic here.
+    // This could involve decoding a JWT token to check its expiration,
+    // or making a lightweight API call to verify the token is still valid.
+    return true; // For now, assume all non-null tokens are valid
   }
 
   @override
@@ -44,53 +55,10 @@ class _SplashScreenState extends State<SplashScreen> {
           ],
         ),
       ),
-        backgroundColor: const Color.fromRGBO(116, 81, 45, 1.0),
-      
-      
-      nextScreen: token == null ? LoginPage() : HomePage(),
+      backgroundColor: const Color.fromRGBO(116, 81, 45, 1.0),
+      nextScreen: token == null ? LoginPage() : MainPage(),
       splashIconSize: 400,
-      duration: 2000, 
+      duration: 2000,
     );
   }
 }
-
-
-
-// import 'dart:async';
-// import 'package:flutter/material.dart';
-// import 'package:restaurant_seat_booking/local_storage.dart';
-// import 'package:restaurant_seat_booking/view/home%20page/home_page.dart';
-// import 'package:restaurant_seat_booking/view/login%20page/cubit/login_page_cubit.dart';
-// import 'package:restaurant_seat_booking/view/login%20page/login_page.dart';
-
-
-// class SplashScreen extends StatefulWidget {
-//   const SplashScreen({super.key});
-
-//   @override
-//   State<SplashScreen> createState() => _SplashScreenState();
-// }
-
-// class _SplashScreenState extends State<SplashScreen> {
-//   splashData() async {
-//      token =await LocalStorage.getData();
-//      print("????????????////////$token");
-//     Navigator.of(context).pushReplacement(MaterialPageRoute(
-//       builder: (context) => token == null ? LoginPage() : HomePage(),
-//     ));
-//   }
-// @override
-//   void initState() {
-//     // TODO: implement initState
-//     super.initState();
-//     Timer(Duration(seconds: 2),splashData);
-
-//   }
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.blue,
-//       body: Center(child: Text("WELCOME",),),
-//     );
-//   }
-// }

@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:restaurant_seat_booking/local_storage.dart';
 import 'package:restaurant_seat_booking/view/home%20page/home_page.dart';
-
-import '../../login page/cubit/login_page_cubit.dart';
+import 'package:restaurant_seat_booking/view/splash%20screen/splashscreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'register_page_state.dart';
 
@@ -17,7 +17,7 @@ class RegisterPageCubit extends Cubit<RegisterPageState> {
   TextEditingController username = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
-bool _isPasswordVisible = false; 
+  bool _isPasswordVisible = false; 
 
   bool get isPasswordVisible => _isPasswordVisible;
 
@@ -27,30 +27,38 @@ bool _isPasswordVisible = false;
   }
 
   register() async {
-    if (email.text.isNotEmpty && password.text.isNotEmpty) {
+    if (email.text.isNotEmpty && password.text.isNotEmpty && username.text.isNotEmpty) {
       try {
         UserCredential? user = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
                 email: email.text.trim(), password: password.text.trim());
         if (user.user != null) {
+          String token = user.user!.uid;
           LocalStorage data = LocalStorage();
           LocalStorage.setPostData(user.user!.uid);
-          token = user!.user!.uid;
+          token = user.user!.uid;
+          
           await FirebaseFirestore.instance.collection("user").add({
             "user_name": username.text,
             "email": email.text,
             "user_id": user.user!.uid,
           });
+          
+          // Store username in SharedPreferences
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('username', username.text);
+          
           Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => HomePage(),
+            builder: (context) => SplashScreen(),
           ));
         }
       } on FirebaseException catch (e) {
         print(e.code);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Registration failed: ${e.message}")));
       }
     } else {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("something went wrong")));
+          .showSnackBar(SnackBar(content: Text("Please fill all fields")));
     }
   }
 }

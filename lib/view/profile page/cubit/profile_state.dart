@@ -1,11 +1,13 @@
 part of 'profile_cubit.dart';
 
 @immutable
-sealed class ProfileState {}
+abstract class ProfileState {}
 
-final class ProfileInitial extends ProfileState {}
-class CurrentName extends ProfileState{
+class ProfileInitial extends ProfileState {}
+
+class ProfileLoaded extends ProfileState {
   final String username;
-  CurrentName({required this.username});
-}
+  final String? profileImage;
 
+  ProfileLoaded({required this.username, this.profileImage});
+}

@@ -13,7 +13,7 @@ class LocalStorage{
   }
  static deleteData()async{
     SharedPreferences storage=await SharedPreferences.getInstance();
-    storage.remove("store");
+    storage.clear();
 
   }
 } 

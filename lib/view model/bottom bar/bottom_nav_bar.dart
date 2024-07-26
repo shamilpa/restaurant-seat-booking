@@ -8,7 +8,6 @@ import 'package:restaurant_seat_booking/view/home%20page/home_page.dart';
 import 'package:restaurant_seat_booking/view/profile%20page/profile_page.dart';
 import 'package:restaurant_seat_booking/view/restaurant%20page/restaurant_page.dart';
 
-
 class MainPage extends StatelessWidget {
   const MainPage({Key? key}) : super(key: key);
 
@@ -66,7 +65,7 @@ class MainPage extends StatelessWidget {
       case 5:
         return ProfilePage();
       default:
-        return  5.hBox; 
+        return 5.hBox;
     }
   }
 }
