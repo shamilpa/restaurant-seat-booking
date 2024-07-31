@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meta/meta.dart';
 
 part 'home_page_state.dart';
-
+String?token;
 class HomePageCubit extends Cubit<HomePageState> {
   HomePageCubit() : super(HomePageInitial());
 

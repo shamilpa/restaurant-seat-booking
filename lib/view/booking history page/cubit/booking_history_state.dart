@@ -15,4 +15,6 @@ class BookingsLoaded extends BookingHistoryState {
 
   @override
   List<Object> get props => [bookings];
+  
 }
+

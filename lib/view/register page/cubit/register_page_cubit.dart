@@ -13,7 +13,7 @@ part 'register_page_state.dart';
 class RegisterPageCubit extends Cubit<RegisterPageState> {
   RegisterPageCubit(this.context) : super(RegisterPageInitial());
   BuildContext context;
-
+String? token;
   TextEditingController username = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
@@ -44,7 +44,6 @@ class RegisterPageCubit extends Cubit<RegisterPageState> {
             "user_id": user.user!.uid,
           });
           
-          // Store username in SharedPreferences
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('username', username.text);
           

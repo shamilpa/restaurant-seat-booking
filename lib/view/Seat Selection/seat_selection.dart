@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:restaurant_seat_booking/view%20model/bottom%20bar/bottom_nav_bar.dart';
 import 'package:restaurant_seat_booking/view%20model/color_component.dart';
 import 'package:restaurant_seat_booking/view%20model/sizedbox.dart';
 import 'package:restaurant_seat_booking/view%20model/text_style.dart';
@@ -163,7 +164,14 @@ class _BookingSeatView extends StatelessWidget {
                 16.hBox,
                 Center(
                   child: InkWell(
-                    onTap: () => _bookTable(context, state),
+                    onTap: () {
+                      _bookTable(context, state);
+                       Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    MainPage(initialIndex: 2)),
+                          );
+                    } ,
                     child: Container(
                       width: 100,
                       height: 50,
@@ -236,10 +244,10 @@ class _BookingSeatView extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(dialogContext).pop();
                   Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => BlocProvider.value(
-                        value: context.read<BookingHistoryCubit>(),
-                        child: BookingPage(),
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider.value(
+                      value: context.read<BookingHistoryCubit>(),
+                      child: BookingPage(),
                       ),
                     ),
                   );

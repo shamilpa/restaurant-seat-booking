@@ -133,7 +133,7 @@ class LoginPage extends StatelessWidget {
                     height: 60,
                     width: 120,
                     child: ElevatedButton(
-                        style:  ButtonStyle(
+                        style:  const ButtonStyle(
                             animationDuration: Duration(seconds: 2),
                             backgroundColor: WidgetStatePropertyAll(
                                 Color.fromRGBO(175, 143, 111, 1.0))),

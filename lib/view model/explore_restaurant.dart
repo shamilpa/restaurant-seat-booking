@@ -3,62 +3,96 @@ import 'package:restaurant_seat_booking/view%20model/text_style.dart';
 import 'package:restaurant_seat_booking/view/Seat%20Selection/seat_selection.dart';
 
 class ExploreRestaurant extends StatelessWidget {
-  ExploreRestaurant(
-      {super.key, required this.exploImg, required this.hotelName});
+  ExploreRestaurant({
+    Key? key,
+    required this.exploImg,
+    required this.hotelName,
+  }) : super(key: key);
+
   final String exploImg;
   final String hotelName;
+
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     return Column(
       children: [
         Container(
-          height: 120,
-          width: 400,
+          height: screenSize.height * 0.13,
+          width: screenSize.width * 0.95,
           decoration: BoxDecoration(
-              border: Border.all(), borderRadius: BorderRadius.circular(10)),
+            border: Border.all(),
+            borderRadius: BorderRadius.circular(screenSize.width * 0.025),
+          ),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(screenSize.width * 0.02),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Container(
-                  width: 100,
-                  height: 100,
+                  width: screenSize.width * 0.225,
+                  height: screenSize.width * 0.225,
                   decoration: BoxDecoration(
                     color: const Color.fromRGBO(116, 81, 45, 1.0),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(screenSize.width * 0.025),
                     image: DecorationImage(
-                        image: AssetImage(exploImg), fit: BoxFit.fill),
+                      image: NetworkImage(exploImg),
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 10, bottom: 50),
+                  padding: EdgeInsets.only(
+                    right: screenSize.width * 0.0375,
+                    bottom: screenSize.height * 0.05
+                  ),
                   child: Text(
                     hotelName,
-                    style: textstyle.copyWith(fontSize: 15,fontWeight: FontWeight.w500),
+                    style: textstyle.copyWith(
+                      fontSize: screenSize.width * 0.04,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => BookingSeat(),));
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 50, left: 10),
-                    child: Container(
-                      height: 40,
-                      width: 80,
-                      decoration: BoxDecoration(
-                         color: const Color.fromRGBO(116, 81, 45, 1.0),
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Center(
-                          child: Text("Book",
-                              style:textstyle.copyWith(fontSize: 16,fontWeight: FontWeight.w400))),
-                    ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: screenSize.height * 0.0510,
+                    left: screenSize.width * 0.055
+                  ),
+                  child: Column(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => BookingSeat()),
+                          );
+                        },
+                        child: Container(
+                          height: screenSize.height * 0.05,
+                          width: screenSize.width * 0.155,
+                          decoration: BoxDecoration(
+                            color: const Color.fromRGBO(116, 81, 45, 1.0),
+                            borderRadius: BorderRadius.circular(screenSize.width * 0.0375),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Book",
+                              style: textstyle.copyWith(
+                                fontSize: screenSize.width * 0.03,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 )
               ],
             ),
           ),
-        ),
+        ),SizedBox(height: screenSize.height*0.0055,)
       ],
     );
   }

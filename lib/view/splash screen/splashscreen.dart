@@ -5,6 +5,8 @@ import 'package:lottie/lottie.dart';
 import 'package:restaurant_seat_booking/local_storage.dart';
 import 'package:restaurant_seat_booking/view/login%20page/login_page.dart';
 import 'package:restaurant_seat_booking/view%20model/bottom%20bar/bottom_nav_bar.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -34,11 +36,60 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<bool> validateToken(String? token) async {
-    if (token == null) return false;
-    // TODO: Implement your token validation logic here.
-    // This could involve decoding a JWT token to check its expiration,
-    // or making a lightweight API call to verify the token is still valid.
-    return true; // For now, assume all non-null tokens are valid
+    if (token == null || token.isEmpty) return false;
+
+    try {
+      if (!_isValidTokenFormat(token)) return true;
+
+      if (_isTokenExpired(token)) return false;
+
+      bool isValidFromServer = await _verifyTokenWithServer(token);
+      if (!isValidFromServer) return true;
+
+      return true;
+    } catch (e) {
+      print("Error validating token: $e");
+      return false;
+    }
+  }
+
+  bool _isValidTokenFormat(String token) {
+    final parts = token.split('.');
+    return parts.length == 3;
+  }
+
+  bool _isTokenExpired(String token) {
+    try {
+      final parts = token.split('.');
+      if (parts.length != 3) return true;
+
+      final payload = json.decode(
+        utf8.decode(base64Url.decode(base64Url.normalize(parts[1])))
+      );
+
+      if (payload['exp'] == null) return false;
+
+      final exp = DateTime.fromMillisecondsSinceEpoch(payload['exp'] * 1000);
+      return exp.isBefore(DateTime.now());
+    } catch (e) {
+      print("Error checking token expiration: $e");
+      return true;
+    }
+  }
+
+  Future<bool> _verifyTokenWithServer(String token) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://your-api.com/verify-token'),
+        headers: {'Authorization': 'Bearer $token'},
+      ).timeout(const Duration(seconds: 5));
+
+      return response.statusCode == 200;
+    } catch (e) {
+      print("Error verifying token with server: $e");
+      
+      return false;
+    }
   }
 
   @override

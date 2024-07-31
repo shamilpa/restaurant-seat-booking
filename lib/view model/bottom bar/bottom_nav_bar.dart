@@ -9,22 +9,24 @@ import 'package:restaurant_seat_booking/view/profile%20page/profile_page.dart';
 import 'package:restaurant_seat_booking/view/restaurant%20page/restaurant_page.dart';
 
 class MainPage extends StatelessWidget {
-  const MainPage({Key? key}) : super(key: key);
+  final int initialIndex;
+  const MainPage({Key? key, this.initialIndex = 0}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => BottomBarCubit(),
+      create: (context) => BottomBarCubit()..updateFlag(initialIndex + 2),
       child: BlocBuilder<BottomBarCubit, BottomBarState>(
         builder: (context, state) {
           return Scaffold(
             backgroundColor: const Color(0xFFF1F1F1),
-            body: _buildBody(state.flag),
+            body: _buildBody(context, state.flag),
             bottomNavigationBar: GNav(
               backgroundColor: const Color.fromRGBO(116, 81, 45, 1.0),
               color: Colors.white,
               tabBackgroundColor: Colors.white24,
               activeColor: Colors.white,
+              selectedIndex: state.flag -2,
               onTabChange: (index) {
                 context.read<BottomBarCubit>().updateFlag(index + 2);
               },
@@ -54,10 +56,13 @@ class MainPage extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(int flag) {
+  Widget _buildBody(BuildContext context, int flag) {
     switch (flag) {
       case 2:
-        return HomePage();
+        return BlocProvider.value(
+          value: BlocProvider.of<BottomBarCubit>(context),
+          child: HomePage(),
+        );
       case 3:
         return RestaurantPage();
       case 4:

@@ -63,7 +63,8 @@ class BookingPage extends StatelessWidget {
               ),
               backgroundColor: bgcolor,
             ),
-             body: state is BookingsLoaded
+             body: 
+             state is BookingsLoaded
               ? Column(
                   children: [
                     Expanded(
