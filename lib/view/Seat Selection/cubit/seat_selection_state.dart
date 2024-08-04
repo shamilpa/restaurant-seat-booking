@@ -9,6 +9,7 @@ class BookingSeatState extends Equatable {
   final int numberOfSeats;
   final String restaurantName;
   final String restaurantImage;
+  final String restaurantLocation;
 
   const BookingSeatState({
     required this.selectedDate,
@@ -18,6 +19,7 @@ class BookingSeatState extends Equatable {
     this.numberOfSeats = 1,
     required this.restaurantName,
     required this.restaurantImage,
+    this.restaurantLocation = '',
   });
 
   BookingSeatState copyWith({
@@ -27,7 +29,7 @@ class BookingSeatState extends Equatable {
     List<int>? tables,
     int? numberOfSeats,
     String? restaurantName,
-    String? restaurantImage,
+    String? restaurantImage,  String? restaurantLocation,
   }) {
     return BookingSeatState(
       selectedDate: selectedDate ?? this.selectedDate,
@@ -37,9 +39,10 @@ class BookingSeatState extends Equatable {
       numberOfSeats: numberOfSeats ?? this.numberOfSeats,
       restaurantName: restaurantName ?? this.restaurantName,
       restaurantImage: restaurantImage ?? this.restaurantImage,
+      restaurantLocation: restaurantLocation ?? this.restaurantLocation, 
     );
   }
 
   @override
-  List<Object?> get props => [selectedDate, selectedTime, selectedTable, tables, numberOfSeats, restaurantName, restaurantImage];
+  List<Object?> get props => [selectedDate, selectedTime, selectedTable, tables, numberOfSeats, restaurantName, restaurantImage,restaurantLocation];
 }

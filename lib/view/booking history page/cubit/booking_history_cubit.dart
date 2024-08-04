@@ -13,18 +13,14 @@ class BookingHistoryCubit extends Cubit<BookingHistoryState> {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('bookingHistory')
-          // Add this line if you have user authentication
-          // .where('userId', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
           .orderBy('timestamp', descending: true)
           .get();
 
-      List<Map<String, dynamic>> bookings = querySnapshot.docs
-          .map((doc) {
-            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-            data['id'] = doc.id; // Add the document ID to the map
-            return data;
-          })
-          .toList();
+      List<Map<String, dynamic>> bookings = querySnapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id;
+        return data;
+      }).toList();
 
       emit(BookingsLoaded(bookings));
     } catch (e) {
@@ -40,7 +36,7 @@ class BookingHistoryCubit extends Cubit<BookingHistoryState> {
           .doc(bookingId)
           .delete();
 
-      loadBookings(); // Reload bookings after cancellation
+      loadBookings();
     } catch (e) {
       print('Error cancelling booking: $e');
       emit(BookingHistoryError('Failed to cancel booking'));

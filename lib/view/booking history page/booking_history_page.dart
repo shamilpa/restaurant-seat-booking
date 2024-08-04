@@ -67,15 +67,22 @@ class BookingPage extends StatelessWidget {
                     children: [
                       Expanded(
                         child: state.bookings.isEmpty
-                            ? Center(child: Text("No bookings available", style: textstyle))
+                            ? Center(
+                                child: Text("No bookings available",
+                                    style: textstyle))
                             : ListView.builder(
                                 itemBuilder: (context, index) {
                                   final booking = state.bookings[index];
                                   return GestureDetector(
-                                    onTap: () => _showCancelDialog(context, booking['id']),
+                                    onTap: () => _showCancelDialog(
+                                        context, booking['id']),
                                     child: Card(
                                       margin: EdgeInsets.all(8),
-                                      child: ListTile(shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),side: BorderSide(color: bgcolor)) ,
+                                      child: ListTile(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            side: BorderSide(color: bgcolor)),
                                         tileColor: bgcolor,
                                         leading: Image.network(
                                           booking['restaurantImage'],
@@ -83,12 +90,12 @@ class BookingPage extends StatelessWidget {
                                           height: 50,
                                           fit: BoxFit.cover,
                                         ),
-                                        title: Text(booking['restaurantName'], style: textstyle),
+                                        title: Text(booking['restaurantName'],
+                                            style: textstyle.copyWith(fontWeight: FontWeight.bold)),
                                         subtitle: Text(
-                                          'Date: ${booking['date']}    Time: ${booking['time']}',
+                                          'Date: ${booking['date']}   Time: ${booking['time']}   Seats: ${booking['guests']}',
                                           style: textstyle,
                                         ),
-                                        trailing: Text('Seats: ${booking['guests']}', style: textstyle),
                                       ),
                                     ),
                                   );

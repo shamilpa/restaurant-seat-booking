@@ -293,6 +293,7 @@ Future<void> saveBookingToFirestore(String restaurantName, String restaurantImag
       'restaurantImage': restaurantImage,
       'date': selectedDate,
       'time': selectedTime,
+      
       'guests': numberOfSeats,
       'timestamp': FieldValue.serverTimestamp(),
       'userId': FirebaseAuth.instance.currentUser?.uid,

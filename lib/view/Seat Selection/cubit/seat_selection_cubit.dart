@@ -15,7 +15,7 @@ class BookingSeatCubit extends Cubit<BookingSeatState> {
   ));
 
   void selectDate(DateTime date) {
-    emit(state.copyWith(selectedDate: date));
+    emit(state.copyWith(selectedDate: date, restaurantLocation: ''));
   }
 
   void selectTime(TimeOfDay time) {
