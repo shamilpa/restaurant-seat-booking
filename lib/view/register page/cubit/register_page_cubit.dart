@@ -26,32 +26,30 @@ String? token;
     emit(RegisterPagePasswordVisibilityChanged(_isPasswordVisible));
   }
 
-  register() async {
-    if (email.text.isNotEmpty && password.text.isNotEmpty && username.text.isNotEmpty) {
-      try {
-        UserCredential? user = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
-                email: email.text.trim(), password: password.text.trim());
-        if (user.user != null) {
-          String token = user.user!.uid;
-          LocalStorage data = LocalStorage();
-          LocalStorage.setPostData(user.user!.uid);
-          token = user.user!.uid;
-          
-          await FirebaseFirestore.instance.collection("user").add({
-            "user_name": username.text,
-            "email": email.text,
-            "user_id": user.user!.uid,
-          });
-          
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString('username', username.text);
-          
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => SplashScreen(),
-          ));
-        }
-      } on FirebaseException catch (e) {
+ register() async {
+  if (email.text.isNotEmpty && password.text.isNotEmpty && username.text.isNotEmpty) {
+    try {
+      UserCredential? userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: email.text.trim(), password: password.text.trim());
+      if (userCredential.user != null) {
+        String uid = userCredential.user!.uid;
+        await LocalStorage.setPostData(uid);
+        
+        await FirebaseFirestore.instance.collection("users").doc(uid).set({
+          "username": username.text,
+          "email": email.text,
+        });
+        
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('username', username.text);
+        await prefs.setString('uid', uid);
+        
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => SplashScreen(),
+        ));
+      }
+    } on FirebaseException catch (e) {
         print(e.code);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Registration failed: ${e.message}")));
       }

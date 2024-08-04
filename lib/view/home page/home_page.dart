@@ -93,6 +93,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               drawer: Drawer(
+                backgroundColor: const Color.fromRGBO(175, 143, 111, 1.0),
                 child: Stack(
                   children: [
                     DrawerHeader(
@@ -134,7 +135,7 @@ class HomePage extends StatelessWidget {
                           ));
                         },
                         child: Container(
-                          width: size.width * 0.7,
+                          width: size.width * 0.8,
                           height: size.height * 0.06,
                           decoration: BoxDecoration(
                             color: Colors.black38,
@@ -166,7 +167,6 @@ class HomePage extends StatelessWidget {
                     )
                   ],
                 ),
-                backgroundColor: const Color.fromRGBO(175, 143, 111, 1.0),
               ),
               body: StreamBuilder(
                   stream: restaurant.snapshots(),
@@ -292,7 +292,7 @@ class HomePage extends StatelessWidget {
                                 child: Padding(
                                   padding: EdgeInsets.only(
                                       top: size.height * 0.02,
-                                      right: size.width * 0.075,
+                                      right: size.width * 0.025,
                                       bottom: size.height * 0.01),
                                   child: Container(
                                     height: size.height * 0.05,

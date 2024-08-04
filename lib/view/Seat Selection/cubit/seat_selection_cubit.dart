@@ -10,6 +10,8 @@ class BookingSeatCubit extends Cubit<BookingSeatState> {
     selectedTime: TimeOfDay.now(),
     tables: List.generate(10, (index) => index + 1),
     numberOfSeats: 1,
+    restaurantName: '',
+    restaurantImage: '',
   ));
 
   void selectDate(DateTime date) {
@@ -28,11 +30,15 @@ class BookingSeatCubit extends Cubit<BookingSeatState> {
     emit(state.copyWith(numberOfSeats: seats));
   }
 
+  void setRestaurantDetails(String name, String image) {
+    emit(state.copyWith(restaurantName: name, restaurantImage: image));
+  }
+
   Map<String, String> confirmBooking(BuildContext context) {
     if (state.selectedTable != -1) {
       return {
-        "Img": "assets/default_restaurant.png", // You might want to replace this with an actual image
-        "txt": "Table ${state.selectedTable + 1}",
+        "Img": state.restaurantImage,
+        "txt": "${state.restaurantName} - Table ${state.selectedTable + 1}",
         "location": "${DateFormat.yMd().format(state.selectedDate)} at ${state.selectedTime.format(context)}, ${state.numberOfSeats} seats"
       };
     }

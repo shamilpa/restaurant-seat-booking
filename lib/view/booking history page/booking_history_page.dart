@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../view model/booking_custom.dart';
 import '../../view model/color_component.dart';
 import '../../view model/text_style.dart';
 import 'cubit/booking_history_cubit.dart';
 
 class BookingPage extends StatelessWidget {
-  BookingPage({Key? key}) : super(key: key);
+  const BookingPage({Key? key}) : super(key: key);
 
-  void _showCancelDialog(BuildContext context, int index) {
+  void _showCancelDialog(BuildContext context, String bookingId) {
     final bookingHistoryCubit = context.read<BookingHistoryCubit>();
 
     showDialog(
@@ -33,7 +32,7 @@ class BookingPage extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                bookingHistoryCubit.cancelBooking(index);
+                bookingHistoryCubit.cancelBooking(bookingId);
                 Navigator.of(dialogContext).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Booking cancelled successfully')),
@@ -50,7 +49,7 @@ class BookingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => BookingHistoryCubit()..loadBookings(),
+      create: (context) => BookingHistoryCubit(context)..loadBookings(),
       child: BlocBuilder<BookingHistoryCubit, BookingHistoryState>(
         builder: (context, state) {
           return Scaffold(
@@ -63,35 +62,47 @@ class BookingPage extends StatelessWidget {
               ),
               backgroundColor: bgcolor,
             ),
-             body: 
-             state is BookingsLoaded
-              ? Column(
-                  children: [
-                    Expanded(
-                      child: state.bookings.isEmpty
-                          ? Center(child: Text("No bookings available", style: textstyle))
-                          : ListView.separated(
-                              itemBuilder: (context, index) {
-                                final booking = state.bookings[index];
-                                return GestureDetector(
-                                  onTap: () => _showCancelDialog(context, index),
-                                  child: BookingContainer(
-                                    Img: booking['Img'] ?? '',
-                                    txt: booking['txt'] ?? '',
-                                    location: booking['location'] ?? '',
-                                  ),
-                                );
-                              },
-                              separatorBuilder: (context, index) => SizedBox(height: 8),
-                              itemCount: state.bookings.length,
-                            ),
-                    ),
-                  ],
-                )
-              : Center(child: CircularProgressIndicator()),
-          backgroundColor: scaffclr,
-        );
-      },
-    ));
+            body: state is BookingsLoaded
+                ? Column(
+                    children: [
+                      Expanded(
+                        child: state.bookings.isEmpty
+                            ? Center(child: Text("No bookings available", style: textstyle))
+                            : ListView.builder(
+                                itemBuilder: (context, index) {
+                                  final booking = state.bookings[index];
+                                  return GestureDetector(
+                                    onTap: () => _showCancelDialog(context, booking['id']),
+                                    child: Card(
+                                      margin: EdgeInsets.all(8),
+                                      child: ListTile(shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),side: BorderSide(color: bgcolor)) ,
+                                        tileColor: bgcolor,
+                                        leading: Image.network(
+                                          booking['restaurantImage'],
+                                          width: 50,
+                                          height: 50,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        title: Text(booking['restaurantName'], style: textstyle),
+                                        subtitle: Text(
+                                          'Date: ${booking['date']}    Time: ${booking['time']}',
+                                          style: textstyle,
+                                        ),
+                                        trailing: Text('Seats: ${booking['guests']}', style: textstyle),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                itemCount: state.bookings.length,
+                              ),
+                      ),
+                    ],
+                  )
+                : Center(child: CircularProgressIndicator()),
+            backgroundColor: scaffclr,
+          );
+        },
+      ),
+    );
   }
 }

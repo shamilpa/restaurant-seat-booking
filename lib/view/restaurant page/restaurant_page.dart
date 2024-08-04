@@ -25,7 +25,7 @@ class RestaurantPage extends StatelessWidget {
     final CollectionReference restaurant =
         FirebaseFirestore.instance.collection('restaurants');
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppBar(automaticallyImplyLeading: false,
         title: Text(
           "Restaurants",
           style: textstyle.copyWith(fontSize: 28, fontWeight: FontWeight.w600),
@@ -166,7 +166,10 @@ class RestaurantPage extends StatelessWidget {
                                                   Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
-                                                        builder: (context) => BookingSeat()),
+                                                        builder: (context) => BookingSeat(
+                                                          restaurantName: restaurantSnap['name'],
+          restaurantImage: imageUrl,
+                                                        )),
                                                   );
                                                 },
                                                 child: Text(

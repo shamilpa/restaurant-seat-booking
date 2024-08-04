@@ -19,7 +19,7 @@ class ExploreRestaurant extends StatelessWidget {
     return Column(
       children: [
         Container(
-          height: screenSize.height * 0.13,
+          height: screenSize.height * 0.125,
           width: screenSize.width * 0.95,
           decoration: BoxDecoration(
             border: Border.all(),
@@ -58,14 +58,19 @@ class ExploreRestaurant extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(
                     top: screenSize.height * 0.0510,
-                    left: screenSize.width * 0.055
+                    left: screenSize.width * 0.095
                   ),
                   child: Column(
                     children: [
                       InkWell(
                         onTap: () {
                           Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => BookingSeat()),
+                            MaterialPageRoute(
+                              builder: (context) => BookingSeat(
+                                restaurantName: hotelName,
+                                restaurantImage: exploImg,
+                              ),
+                            ),
                           );
                         },
                         child: Container(
@@ -92,7 +97,8 @@ class ExploreRestaurant extends StatelessWidget {
               ],
             ),
           ),
-        ),SizedBox(height: screenSize.height*0.0055,)
+        ),
+        SizedBox(height: screenSize.height*0.0055,)
       ],
     );
   }

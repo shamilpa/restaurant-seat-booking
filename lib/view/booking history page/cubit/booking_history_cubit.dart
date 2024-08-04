@@ -1,42 +1,49 @@
-// booking_history_cubit.dart
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 part 'booking_history_state.dart';
 
 class BookingHistoryCubit extends Cubit<BookingHistoryState> {
-  BookingHistoryCubit() : super(BookingHistoryInitial());
-  
-  void loadBookings() {
-    final bookings = [
-     
-    ];
-    emit(BookingsLoaded([]));
-  }
+  BookingHistoryCubit(this.context) : super(BookingHistoryInitial());
+  BuildContext context;
 
-  void addBooking(Map<String, String> booking) {
-    if (state is BookingsLoaded) {
-      final currentState = state as BookingsLoaded;
-      final updatedBookings = List<Map<String, String>>.from(currentState.bookings)
-        ..add(booking);
-      emit(BookingsLoaded(updatedBookings));
-      print('Booking added. Total bookings: ${updatedBookings.length}');
-    } else {
-      loadBookings();
-      addBooking(booking);
+  void loadBookings() async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('bookingHistory')
+          // Add this line if you have user authentication
+          // .where('userId', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+          .orderBy('timestamp', descending: true)
+          .get();
+
+      List<Map<String, dynamic>> bookings = querySnapshot.docs
+          .map((doc) {
+            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+            data['id'] = doc.id; // Add the document ID to the map
+            return data;
+          })
+          .toList();
+
+      emit(BookingsLoaded(bookings));
+    } catch (e) {
+      print('Error loading bookings: $e');
+      emit(BookingHistoryError('Failed to load bookings'));
     }
   }
 
-  void cancelBooking(int index) {
-    if (state is BookingsLoaded) {
-      final currentState = state as BookingsLoaded;
-      final updatedBookings = List<Map<String, String>>.from(currentState.bookings);
-      updatedBookings.removeAt(index);
-      emit(BookingsLoaded(updatedBookings));
-      print('Booking cancelled. Remaining bookings: ${updatedBookings.length}');
-    } else {
-      print('Cannot cancel booking: State is not BookingsLoaded');
+  void cancelBooking(String bookingId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('bookingHistory')
+          .doc(bookingId)
+          .delete();
+
+      loadBookings(); // Reload bookings after cancellation
+    } catch (e) {
+      print('Error cancelling booking: $e');
+      emit(BookingHistoryError('Failed to cancel booking'));
     }
   }
 }
